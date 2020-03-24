@@ -1,9 +1,7 @@
 # Hangman Game 
-A Hangman game using python and tkinter (for gui). Hope ya'll enojoy!!
+A Hangman game in python using tkinter for GUI. Hope ya'll enjoy!!
 
-
-
-The csv file included has been taken from kaggle and contains movie data.
+This project uses the IMDB Movie Dataset sourced from Kaggle.
 
 
 Images:
