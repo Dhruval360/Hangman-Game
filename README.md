@@ -1,3 +1,2 @@
 # Hangman-Game-
-A Hangman game using python and tkinter (for gui) \n
-Hope ya'll enojoy!!
+A Hangman game using python and tkinter (for gui). Hope ya'll enojoy!!
