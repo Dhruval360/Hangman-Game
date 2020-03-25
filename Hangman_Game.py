@@ -126,7 +126,7 @@ HANGMAN = (
        |    |  |
        |  
        ----------
-       """)
+       """)  #Text art for hangman
 
 script_dir = os.path.dirname(__file__) #This gives the absolute path of the directory the python code is in
 rel_path = "IMDB-Movie-Data.csv" #This dataset was downloaded from kaggle
@@ -138,11 +138,12 @@ gens.add('')
 GENRES = sorted(gens)           
 
 top= Tk()
+top.title("Welcome")
 top.geometry('340x400')
 
 def link():
     root = Tk()
-
+    
     #Variables
     submitted = set()
     clicked, diffclk = StringVar(), StringVar()
@@ -150,11 +151,21 @@ def link():
     fg = '#000fff000'
 
     #Functions
+    #Update function, to update the game outputs after each input
+    def update():
+        output.delete(0.0, END)
+        output.insert(0.0, out)
+        guess.add(key) #key is the virtual keyboard input
+        gtn.delete(0.0, END)
+        gtn.insert(0.0, guess)
+    
     #For submit button
     def submission():
         try:
             gen = clicked.get()
             movies = list(movie_df.loc[movie_df['Genre'] == gen, 'Title'])
+            
+            global chosen
             chosen = random.choice(movies) # Chosen movie
             hint_df = movie_df.loc[movie_df['Title'] == chosen, 'Description':'Runtime (Minutes)']
             hintss = hint_df['Description']
@@ -169,7 +180,7 @@ def link():
             hint_actor = str(hint_actors)[4:-27:1]
             global hint_director
             hint_director = str(hint_directors)[4:-30:1]
-
+            
             chosen = chosen.upper()
 
             global all_letters
@@ -225,8 +236,9 @@ def link():
             messagebox.showinfo( 'Hint', 'Description-{}\nActors-{}\nDirector-{}'.format(hint_desc, hint_actor, hint_director))
 
     #For each keyboard button
-    def click(key):
-        key = key.upper()
+    def click(inp):
+        global key
+        key = inp
         if len(submitted)==1:
             if key not in guess:
                 if key in all_letters:
@@ -235,7 +247,9 @@ def link():
                             for a in range(len(i)):
                                 if i[a] == key:
                                     out[chosen_movie.index(i)][a] = key
+                    update()
                 elif key not in all_letters and len(lives) != 0:
+                    update()
                     lives.pop()
                     messagebox.showinfo('Letter absent',
                                         "\nThe letter '{}' is absent in the movie's name\nYou lost a life and now have only {} lives left".format(
@@ -245,7 +259,7 @@ def link():
                     if len(lives)==0:
                         hang.delete(0.0, END)
                         hang.insert(0.0, HANGMAN[-len(lives) - 1])
-                        messagebox.showinfo('Game Over', 'Oops! You have lost all your chances :(\nThe correct movie was: {}'.format(chosen_movie))
+                        messagebox.showinfo('Game Over', 'Oops! You have lost all your chances :(\nThe correct movie was: {}'.format(chosen))
                         messagebox.showinfo('Play again?', 'Better luck next time!!\nWould you like to play again?\nClick on the submit button after choosing another Genre of your taste')        
                         hang.delete(0.0, END)
                         output.delete(0.0, END)
@@ -253,17 +267,13 @@ def link():
                         guess.clear()
                         submitted.pop()
                         gtn.delete(0.0, END)
-                        gtn.insert(0.0, guess)
-
+                        gtn.insert(0.0, 'Click on submit to make any guesses.')
+                        
             elif key in guess:
                 messagebox.showinfo('Already used', 'You have already used that letter')
-            output.delete(0.0, END)
-            output.insert(0.0, out)
-            guess.add(key)
-            gtn.delete(0.0, END)
-            gtn.insert(0.0, guess)
 
             if out == chosen_movie:
+                update()
                 messagebox.showinfo('You won!!', 'Yay! you won!\nCongratulations on guessing the right word!')
                 messagebox.showinfo('Play again?', 'Would you like to play again?\nClick on the submit button after choosing another Genre of your taste')
                 hang.delete(0.0, END)
@@ -327,7 +337,7 @@ def link():
     gtn.insert(0.0, 'Click on submit to make any guesses.')
     
     #Virtual keyboard
-    button_list = list('qwertyuiopasdfghjklzxcvbnm')
+    button_list = list('qwertyuiopasdfghjklzxcvbnm'.upper())
     r = 410
     c = 65
     for b in button_list:
